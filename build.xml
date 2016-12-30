@@ -12,11 +12,14 @@
   <property name="test.dir" value="test"/>
   <property name="build.dir" value="build"/>
   <property name="dist.dir" value="dist"/>
+  <property name="build.classpath" value="${build}"/>
+  
+  
 
   <!-- Targets -->
 
   <target name="resolve" description="Retrieve dependencies with Ivy.">
-  <!--  <ivy:resolve log="download-only"/>
+  <!-- <ivy:resolve log="download-only"/>
     <ivy:cachepath conf="build" pathid="build.classpath"/>
     <ivy:cachepath conf="default" pathid="runtime.classpath"/>
     <ivy:cachefileset conf="default" setid="runtime.fileset"/>
@@ -91,17 +94,21 @@
 
   <target name="javadoc" depends="resolve,compile"
           description="Generate documentation.">
-    <taskdef classname="lombok.delombok.ant.DelombokTask" name="delombok"
+   <!-- <taskdef classname="lombok.delombok.ant.DelombokTask" name="delombok"
              classpathref="build.classpath"/>
     <delombok verbose="true" to="${build.dir}/src" from="${src.dir}">
       <classpath refid="build.classpath"/>
-    </delombok>
+    </delombok>-->
+	
+	<copy todir="${build.dir}/src">
+      <fileset dir="${src.dir}" />
+    </copy>
     <javadoc destdir="${dist.dir}/javadoc"
              link="http://download.oracle.com/javase/6/docs/api/"
              sourcepath="${build.dir}/src"
              Doctitle="${ant.project.name} ${version}"
-             Windowtitle="${ant.project.name} ${version}">
-      <classpath refid="build.classpath"/>
+             Windowtitle="${ant.project.name} ${version}"> 
+    <!--  <classpath refid="build.classpath"/> -->
     </javadoc>
   </target>
 
@@ -217,11 +224,7 @@
       <fileset dir="${src.dir}"/>
     </jar>
     <!-- Sign all the things. You'll need gpg-agent help here. -->
-    <apply executable="gpg" failonerror="true">
-      <arg value="--detach-sign"/>
-      <arg value="--armor"/>
-      <fileset dir="${dist.dir}/bundle"/>
-    </apply>
+    
     <!-- Pack it all up -->
     <jar destfile="${dist.dir}/bundle.jar" basedir="${dist.dir}/bundle"/>
   </target>
